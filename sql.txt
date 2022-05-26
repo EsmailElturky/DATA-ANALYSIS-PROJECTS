@@ -1,0 +1,70 @@
+## query 1 ## -what is the most required genre?
+
+select g.Name the_genre,count(y.InvoiceId) total_number
+from (select il.InvoiceId,t.GenreId
+from InvoiceLine il
+join track t
+on il.TrackId=t.TrackId)y
+join Genre g
+on y.GenreId=g.GenreId
+group by the_genre
+order by total_number DESC
+LIMIT 10;
+
+-----------------------------------------------------------------------
+
+## query 2 ## -the Artist names of the top 10 rock total track count.
+
+SELECT fin.Artist_name,count(genre_type)as number_of_rock_songs
+FROM(SELECT art.Name Artist_name,na.Name genre_type
+FROM(SELECT gn.InvoiceId,gn.Name,al.ArtistId
+FROM(SELECT invo.InvoiceId,invo.AlbumId,g.Name
+FROM(SELECT inv.InvoiceId,tr.GenreId,tr.AlbumId
+FROM InvoiceLine Inv
+JOIN Track tr
+on inv.TrackId=tr.TrackId)invo
+JOIN Genre g
+on invo.GenreId=g.GenreId)gn
+JOIN Album al
+on gn.AlbumId=al.AlbumId)na
+JOIN Artist art
+on na.ArtistId=art.ArtistId
+WHERE genre_type='Rock')fin
+GROUP by Artist_name
+ORDER by number_of_rock_songs DESC
+LIMIT 10
+
+
+## query 3 ## Top 10 artists that have produced the most number of sales
+
+SELECT invoices.Name artist_name,count(invoices.invoiceid) as number_of_sales
+FROM(SELECT in_al.InvoiceId,art.Name
+FROM(SELECT i.InvoiceId,al.ArtistId
+FROM(SELECT inv.InvoiceId,t.AlbumId
+FROM InvoiceLine inv 
+JOIN Track t
+on inv.TrackId=t.TrackId)i
+JOIN Album al
+on i.AlbumId=al.AlbumId)in_al
+JOIN Artist art 
+on in_al.ArtistId=art.ArtistId)invoices
+GROUP by artist_name
+ORDER by  number_of_sales DESC
+LIMIT 10
+-----------------------------------------------------------------------
+
+
+## query 4 ## Top albums based on number of tracks sold
+
+SELECT a.AlbumId,a.Title album_name,count(t.Name)number_of_tracks_sold
+FROM Track t
+JOIN Album a
+on t.AlbumId=a.AlbumId
+GROUP by a.Title
+ORDER by number_of_tracks_sold DESC
+LIMIT 10 ;
+
+
+
+
+
